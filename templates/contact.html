@@ -1,17 +1,114 @@
 {% extends 'base.html' %}
-{% load crispy_forms_tags %}
-{% block title %}Contact{% endblock %}
+{% load static crispy_forms_tags %}
+{% block title %}Nous Contacter - Association Deux Zero{% endblock %}
 {% block content %}
-<div class="container">
-    <h1 class="display-4 mb-4">Nous Contacter</h1>
-    <div class="row">
-        <div class="col-md-6">
-            <form method="post">
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type="submit" class="btn btn-primary">Envoyer</button>
-            </form>
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <div class="hero-section text-center text-white" style="background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%); padding: 80px 20px;">
+        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeIn">Nous Contacter</h1>
+        <p class="lead mb-4 animate__animated animate__fadeIn" style="animation-delay: 0.3s;">
+            Envoyez-nous un message ou contactez-nous directement pour rejoindre l'aventure !
+        </p>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="container my-5">
+        {% if messages %}
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    {% for message in messages %}
+                        <div class="alert alert-success alert-dismissible fade show animate__animated animate__fadeIn" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <!-- Contact Form -->
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.6s;">
+                    <div class="card-body">
+                        <h3 class="card-title fw-bold mb-4">Envoyez-nous un message</h3>
+                        <form method="post">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary mt-3 animate__animated animate__pulse">Envoyer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Contact Info -->
+            <div class="col-md-6 mb-4">
+                <div class="card border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 0.9s;">
+                    <div class="card-body">
+                        <h3 class="card-title fw-bold mb-4">Nos coordonnées</h3>
+                        <p class="card-text"><strong>Email :</strong> <a href="mailto:contact@deuxzero.org" class="text-primary text-decoration-none">contact@deuxzero.org</a></p>
+                        <p class="card-text"><strong>Téléphone :</strong> +237 696 41 21 96</p>
+                        <p class="card-text"><strong>Adresse :</strong> Nsimeyong, Yaounde, Cameroun</p>
+                        <h5 class="mt-4 mb-3">Suivez-nous</h5>
+                        <div class="d-flex gap-3">
+                            <a href="https://facebook.com/deuxzero" target="_blank" class="text-primary">
+                                <img src="{% static 'images/facebook.png' %}" alt="Facebook" style="width: 40px; height: 40px; object-fit: scale-down;">
+                            </a>
+                            <a href="https://twitter.com/deuxzero" target="_blank" class="text-primary">
+                                <img src="{% static 'images/twitter.png' %}" alt="Twitter" style="width: 40px; height: 40px; object-fit: scale-down;">
+                            </a>
+                            <a href="https://instagram.com/deuxzero" target="_blank" class="text-primary">
+                                <img src="{% static 'images/instagram.jpeg' %}" alt="Instagram" style="width: 40px; height: 40px; object-fit: scale-down;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Call to Action Section -->
+    <div class="cta-section text-center py-5 bg-light">
+        <h2 class="display-5 fw-bold mb-4 animate__animated animate__fadeIn">Rejoignez la JDDN !</h2>
+        <p class="lead mb-4">Devenez membre ou participez à nos rencontres pour vivre des moments uniques.</p>
+        <a href="{% url 'membres' %}" class="btn btn-success btn-lg animate__animated animate__pulse">Découvrir nos membres</a>
+        <a href="{% url 'rencontres' %}" class="btn btn-primary btn-lg animate__animated animate__pulse ms-3">Voir nos rencontres</a>
+    </div>
+
+    <!-- Custom CSS -->
+    <style>
+        .hero-section {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card-body {
+            background: #fff;
+            padding: 20px;
+        }
+        .btn-primary, .btn-success {
+            transition: background-color 0.3s ease;
+        }
+        .animate__pulse {
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+
+    <!-- Include Animate.css and Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </div>
 {% endblock %}
