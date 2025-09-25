@@ -1,21 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Bureau - Association Deux Zero{% endblock %}
+{% block title %}Membres - Association Deux Zero{% endblock %}
 {% block content %}
 <div class="container-fluid p-0">
     <!-- Hero Section -->
     <div class="hero-section text-center text-white" style="background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%); padding: 80px 20px;">
-        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeIn">Le Bureau de la {{ association.nom }}</h1>
+        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeIn">Nos Membres</h1>
         <p class="lead mb-4 animate__animated animate__fadeIn" style="animation-delay: 0.3s;">
-            Découvrez les membres qui dirigent notre association avec passion et engagement.
+            Rencontrez les membres qui font vivre la communauté JDDN avec énergie et dévouement.
         </p>
     </div>
 
-    <!-- Bureau Members Section -->
+    <!-- Members Section -->
     <div class="container my-5">
-        {% if bureau_membres_with_delays %}
+        {% if membres_with_delays %}
             <div class="row">
-                {% for membre, delay in bureau_membres_with_delays %}
+                {% for membre, delay in membres_with_delays %}
                     <div class="col-md-6 col-lg-4 mb-4">
                         <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: {{ delay }}s;">
                             <div class="card-img-container" style="aspect-ratio: 4/3; overflow: hidden;">
@@ -26,9 +26,12 @@
                                 {% endif %}
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title text-primary fw-bold">{{ membre.first_name }} {{ membre.last_name }}</h5>
-                                <p class="card-text"><strong>Rôle :</strong> {{ membre.role.get_nom_display|default:"N/A" }}</p>
+                                <h5 class="card-title text-primary fw-bold"><a href="{% url 'membre_detail' membre.id %}" class="text-primary text-decoration-none">{{ membre.first_name }} {{ membre.last_name }}</a></h5>
+                                <p class="card-text"><strong>Rôle :</strong> {{ membre.role.get_nom_display|default:"Membre" }}</p>
                                 <p class="card-text"><strong>Pseudo :</strong> {{ membre.pseudo|default:"N/A" }}</p>
+                                {% if user.role.nom == 'president' or user.role.nom == 'vice_president' %}
+                                    <a href="{% url 'supprimer_membre' membre.id %}" class="btn btn-danger btn-sm mt-2" onclick="return confirm('Voulez-vous vraiment supprimer ce membre ?');">Supprimer</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -36,8 +39,8 @@
             </div>
         {% else %}
             <div class="text-center text-muted animate__animated animate__fadeInUp" style="animation-delay: 0.9s;">
-                <p class="fs-5">Aucun membre du bureau à afficher pour le moment.</p>
-                <p class="lead">Rejoignez notre équipe pour contribuer à la communauté Deux Zero !</p>
+                <p class="fs-5">Aucun membre à afficher pour le moment.</p>
+                <p class="lead">Rejoignez notre communauté pour participer à nos activités !</p>
                 <a href="{% url 'contact' %}" class="btn btn-success btn-lg animate__animated animate__pulse">Nous contacter</a>
             </div>
         {% endif %}
@@ -45,8 +48,8 @@
 
     <!-- Call to Action Section -->
     <div class="cta-section text-center py-5 bg-light">
-        <h2 class="display-5 fw-bold mb-4 animate__animated animate__fadeIn">Rejoignez notre mission !</h2>
-        <p class="lead mb-4">Participez à nos initiatives et faites partie de l'aventure Deux Zero.</p>
+        <h2 class="display-5 fw-bold mb-4 animate__animated animate__fadeIn">Devenez membre !</h2>
+        <p class="lead mb-4">Participez à nos initiatives et rejoignez l'aventure avec la JDDN.</p>
         <a href="{% url 'rencontres' %}" class="btn btn-success btn-lg animate__animated animate__pulse">Découvrir nos rencontres</a>
     </div>
 
@@ -79,6 +82,12 @@
         .card-body {
             background: #fff;
             padding: 20px;
+        }
+        .btn-danger {
+            transition: background-color 0.3s ease;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
         }
         .animate__pulse {
             animation-duration: 1.5s;

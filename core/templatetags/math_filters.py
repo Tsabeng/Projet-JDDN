@@ -8,3 +8,9 @@ def divide(value, arg):
         return float(value) / float(arg)
     except (ValueError, ZeroDivisionError):
         return 0
+    
+
+
+@register.filter
+def in_list(value, arg):
+    return value in arg.split(',')

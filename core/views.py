@@ -58,25 +58,58 @@ def gestion(request):
         'membres': membres,
         'depense_form': depense_form,
     })
+logger = logging.getLogger(__name__)
+
+class MembreForm(forms.ModelForm):
+    class Meta:
+        model = Membre
+        fields = ['first_name', 'last_name', 'pseudo', 'role', 'photo']
+
+@login_required
+def membres(request):
+    association = request.user.association
+    if not association:
+        logger.error("No association for user %s", request.user)
+        return render(request, 'core/403.html', {'error': 'Aucune association associée à cet utilisateur.'}, status=403)
+    membres = Membre.objects.filter(association=association).order_by('last_name', 'first_name')
+    logger.debug("Found %d members for association %s", membres.count(), association)
+    membres_with_delays = [(membre, index / 3.0) for index, membre in enumerate(membres)]
+    return render(request, 'core/membres.html', {
+        'association': association,
+        'membres_with_delays': membres_with_delays,
+    })
+
+@login_required
+def supprimer_membre(request, membre_id):
+    if request.user.role.nom not in ['president', 'vice_president']:
+        logger.error("User %s not authorized to delete members", request.user)
+        return render(request, 'core/403.html', {'error': 'Vous n\'êtes pas autorisé à supprimer des membres.'}, status=403)
+    membre = get_object_or_404(Membre, id=membre_id, association=request.user.association)
+    membre.delete()
+    logger.info("Member %s deleted by %s", membre, request.user)
+    return redirect('membres')
+
+@login_required
+def membre_detail(request, membre_id):
+    membre = get_object_or_404(Membre, id=membre_id, association=request.user.association)
+    return render(request, 'core/membre_detail.html', {'membre': membre})
 
 @login_required
 def ajouter_membre(request):
-    if not request.user.is_bureau() or request.user.role.nom not in ['president', 'vice_president']:
-        return render(request, 'core/403.html', status=403)
+    if request.user.role.nom not in ['president', 'vice_president']:
+        logger.error("User %s not authorized to add members", request.user)
+        return render(request, 'core/403.html', {'error': 'Vous n\'êtes pas autorisé à ajouter des membres.'}, status=403)
     if request.method == 'POST':
         form = MembreForm(request.POST, request.FILES)
         if form.is_valid():
             membre = form.save(commit=False)
             membre.association = request.user.association
             membre.save()
-            messages.success(request, 'Membre ajouté avec succès.')
-            return redirect('gestion')
-        else:
-            messages.error(request, 'Erreur dans le formulaire.')
+            logger.info("Member %s added by %s", membre, request.user)
+            return redirect('membres')
     else:
         form = MembreForm()
     return render(request, 'core/ajouter_membre.html', {'form': form})
-
 @login_required
 def ajouter_match(request):
     if not request.user.is_bureau():
@@ -192,10 +225,7 @@ def contact(request):
         form = ContactForm()
     return render(request, 'contact.html', {'form': form})
 
-def membres(request):
-    association = Association.objects.first()
-    membres = Membre.objects.filter(association=association)
-    return render(request, 'membres.html', {'membres': membres})
+
 
 
 
@@ -222,15 +252,6 @@ def creer_association(request):
     return render(request, 'creer_association.html', {'form': form})
 
 
-@login_required
-def supprimer_membre(request, membre_id):
-    if request.user.role.nom not in ['president', 'vice_president']:
-        messages.error(request, "Seul le président ou vice-président peut supprimer un membre.")
-        return redirect('membres')
-    membre = get_object_or_404(Membre, id=membre_id, association=request.user.association)
-    membre.delete()
-    messages.success(request, 'Membre supprimé.')
-    return redirect('membres')
 
 @login_required
 def annonces(request):
