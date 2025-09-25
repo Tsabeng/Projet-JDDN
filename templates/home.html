@@ -1,42 +1,100 @@
-
 {% extends 'base.html' %}
 {% load static %}
-{% block title %}Accueil{% endblock %}
+{% block title %}Accueil - Association JDDN{% endblock %}
 {% block content %}
-<div class="container">
-    <h1 class="display-4 text-center mb-4">Bienvenue à l'Association Deux Zero</h1>
-    {% if association %}
-        <p class="lead text-center">{{ association.description|truncatewords:30 }}</p>
-    {% endif %}
-    <!-- Carousel -->
-    <div id="carouselHome" class="carousel slide mb-4" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            {% for photo in photos %}
-                <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <img src="{{ photo.image.url }}" class="d-block w-100" alt="{{ photo.titre }}" style="max-height: 400px; object-fit: cover;">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>{{ photo.titre }}</h5>
-                        <p>{{ photo.description|truncatewords:10 }}</p>
+<div class="container-fluid p-0">
+    <!-- Hero Section with Welcome Text -->
+    <div class="hero-section text-center text-white" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); padding: 100px 20px;">
+        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeIn">Bienvenue à l'Association JDDN !</h1>
+        <p class="lead mb-4 animate__animated animate__fadeIn" style="animation-delay: 0.3s;">
+            Rejoignez une communauté dynamique et passionnée ! Ensemble, nous partageons des moments inoubliables à travers des matchs, des événements et des initiatives solidaires.
+        </p>
+        {% if association %}
+            <p class="fs-5 mb-5 animate__animated animate__fadeIn" style="animation-delay: 0.6s;">
+                {{ association.description|truncatewords:40 }}
+            </p>
+        {% endif %}
+        <a href="{% url 'membres' %}" class="btn btn-primary btn-lg animate__animated animate__pulse" style="animation-delay: 0.9s;">Découvrir nos membres</a>
+    </div>
+
+    <!-- Carousel Section -->
+    <div class="carousel-section my-5">
+        <div id="carouselHome" class="carousel slide shadow-lg" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                {% for photo in photos %}
+                    <button type="button" data-bs-target="#carouselHome" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-current="{% if forloop.first %}true{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+                {% empty %}
+                    <button type="button" data-bs-target="#carouselHome" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                {% endfor %}
+            </div>
+            <div class="carousel-inner">
+                {% for photo in photos %}
+                    <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                        <img src="{{ photo.image.url }}" class="d-block w-100" alt="{{ photo.titre }}" style="height: 500px; object-fit: cover; border-radius: 10px;">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+                            <h5 class="fw-bold">{{ photo.titre }}</h5>
+                            <p>{{ photo.description|truncatewords:15 }}</p>
+                        </div>
                     </div>
-                </div>
-            {% empty %}
-                <div class="carousel-item active">
-                    <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="Placeholder">
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>Bienvenue</h5>
-                        <p>Découvrez nos activités !</p>
+                {% empty %}
+                    <div class="carousel-item active">
+                        <img src="https://via.placeholder.com/1200x500?text=Bienvenue+à+Deux+Zero" class="d-block w-100" alt="Placeholder" style="height: 500px; object-fit: cover; border-radius: 10px;">
+                        <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
+                            <h5 class="fw-bold">Bienvenue à la JDDN</h5>
+                            <p>Participez à nos événements et découvrez notre passion pour le sport !</p>
+                        </div>
                     </div>
-                </div>
-            {% endfor %}
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselHome" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Précédent</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselHome" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Suivant</span>
+            </button>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselHome" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselHome" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
+    </div>
+
+    <!-- Call to Action Section -->
+    <div class="cta-section text-center py-5 bg-light">
+        <h2 class="display-5 fw-bold mb-4">Rejoignez-nous dès aujourd'hui !</h2>
+        <p class="lead mb-4">Devenez membre de la JDDN et participez à nos activités sportives et communautaires.</p>
+        <a href="{% url 'contact' %}" class="btn btn-success btn-lg">Nous contacter</a>
     </div>
 </div>
+
+<!-- Custom CSS for Animations and Styling -->
+<style>
+    .hero-section {
+        min-height: 400px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    .carousel-section {
+        max-width: 1200px;
+        margin: auto;
+    }
+    .carousel-item img {
+        transition: transform 0.5s ease;
+    }
+    .carousel-item:hover img {
+        transform: scale(1.05);
+    }
+    .carousel-caption {
+        bottom: 20px;
+        background: rgba(0, 0, 0, 0.7);
+        border-radius: 8px;
+    }
+    .animate__pulse {
+        animation-duration: 1.5s;
+        animation-iteration-count: infinite;
+    }
+</style>
+
+<!-- Include Animate.css for animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 {% endblock %}

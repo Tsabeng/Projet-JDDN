@@ -1,23 +1,81 @@
 {% extends 'base.html' %}
-{% block title %}Annonces{% endblock %}
+{% load static %}
+{% block title %}Annonces - Association Deux Zero{% endblock %}
 {% block content %}
-<div class="container">
-    <h1 class="display-4 mb-4">Annonces de {{ association.nom }}</h1>
-    {% if annonces %}
-        <div class="list-group">
-            {% for annonce in annonces %}
-                <div class="list-group-item">
-                    <h5 class="mb-1">{{ annonce.titre }}</h5>
-                    <p class="mb-1">{{ annonce.contenu }}</p>
-                    <small>Publié par {{ annonce.publie_par.pseudo|default:"N/A" }} le {{ annonce.date_creation|date:"d/m/Y H:i" }}</small>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>Aucune annonce publiée.</p>
-    {% endif %}
-    {% if user.is_bureau %}
-        <a href="{% url 'ajouter_annonce' %}" class="btn btn-primary mt-3">Ajouter Annonce</a>
-    {% endif %}
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <div class="hero-section text-center text-white" style="background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%); padding: 80px 20px;">
+        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeIn">Annonces de {{ association.nom }}</h1>
+        <p class="lead mb-4 animate__animated animate__fadeIn" style="animation-delay: 0.3s;">
+            Restez informé des dernières nouvelles, événements et activités de notre communauté !
+        </p>
+        {% if user.is_bureau %}
+            <a href="{% url 'ajouter_annonce' %}" class="btn btn-primary btn-lg animate__animated animate__pulse" style="animation-delay: 0.6s;">Ajouter une annonce</a>
+        {% endif %}
+    </div>
+
+    <!-- Announcements Section -->
+    <div class="container my-5">
+        {% if annonces_with_delays %}
+            <div class="row">
+                {% for annonce, delay in annonces_with_delays %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: {{ delay }}s;">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary fw-bold">{{ annonce.titre }}</h5>
+                                <p class="card-text">{{ annonce.contenu|truncatewords:50 }}</p>
+                                <small class="text-muted">Publié par {{ annonce.publie_par.pseudo|default:"N/A" }} le {{ annonce.date_creation|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <div class="card-footer bg-transparent border-0">
+                                <a href="#" class="btn btn-outline-primary btn-sm">Lire plus</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center text-muted animate__animated animate__fadeInUp" style="animation-delay: 0.9s;">
+                <p class="fs-5">Aucune annonce publiée pour le moment. Revenez bientôt pour les dernières nouvelles !</p>
+                {% if user.is_bureau %}
+                    <a href="{% url 'ajouter_annonce' %}" class="btn btn-success">Publier la première annonce</a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Call to Action Section -->
+    <div class="cta-section text-center py-5 bg-light">
+        <h2 class="display-5 fw-bold mb-4 animate__animated animate__fadeIn">Participez à nos activités !</h2>
+        <p class="lead mb-4">Découvrez nos événements et rejoignez la communauté Deux Zero.</p>
+        <a href="{% url 'rencontres' %}" class="btn btn-success btn-lg animate__animated animate__pulse">Voir nos rencontres</a>
+    </div>
+
+    <!-- Custom CSS -->
+    <style>
+        .hero-section {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card-footer {
+            background: transparent;
+        }
+        .animate__pulse {
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
+        }
+    </style>
+
+    <!-- Include Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </div>
 {% endblock %}

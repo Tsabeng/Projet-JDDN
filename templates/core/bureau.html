@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Bureau - Association Deux Zero{% endblock %}
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <div class="hero-section text-center text-white" style="background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%); padding: 80px 20px;">
+        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeIn">Le Bureau de {{ association.nom }}</h1>
+        <p class="lead mb-4 animate__animated animate__fadeIn" style="animation-delay: 0.3s;">
+            Découvrez les membres qui dirigent notre association avec passion et engagement.
+        </p>
+    </div>
+
+    <!-- Bureau Members Section -->
+    <div class="container my-5">
+        {% if bureau_membres_with_delays %}
+            <div class="row">
+                {% for membre, delay in bureau_membres_with_delays %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: {{ delay }}s;">
+                            {% if membre.photo %}
+                                <img src="{{ membre.photo.url }}" class="card-img-top" alt="{{ membre.pseudo }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <img src="https://via.placeholder.com/200x200?text={{ membre.pseudo|slice:":1" }}" class="card-img-top" alt="Placeholder" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title text-primary fw-bold">{{ membre.first_name }} {{ membre.last_name }}</h5>
+                                <p class="card-text"><strong>Rôle :</strong> {{ membre.role.get_nom_display|default:"N/A" }}</p>
+                                <p class="card-text"><strong>Pseudo :</strong> {{ membre.pseudo|default:"N/A" }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center text-muted animate__animated animate__fadeInUp" style="animation-delay: 0.9s;">
+                <p class="fs-5">Aucun membre du bureau à afficher pour le moment.</p>
+                <p class="lead">Rejoignez notre équipe pour contribuer à la communauté Deux Zero !</p>
+                <a href="{% url 'contact' %}" class="btn btn-success btn-lg animate__animated animate__pulse">Nous contacter</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Call to Action Section -->
+    <div class="cta-section text-center py-5 bg-light">
+        <h2 class="display-5 fw-bold mb-4 animate__animated animate__fadeIn">Rejoignez notre mission !</h2>
+        <p class="lead mb-4">Participez à nos initiatives et faites partie de l'aventure Deux Zero.</p>
+        <a href="{% url 'rencontres' %}" class="btn btn-success btn-lg animate__animated animate__pulse">Découvrir nos rencontres</a>
+    </div>
+
+    <!-- Custom CSS -->
+    <style>
+        .hero-section {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card-img-top {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card-body {
+            background: #fff;
+            padding: 20px;
+        }
+        .animate__pulse {
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+
+    <!-- Include Animate.css and Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</div>
+{% endblock %}

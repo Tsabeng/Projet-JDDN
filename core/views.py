@@ -8,6 +8,8 @@ from .forms import PhotoForm
 from .models import Photo
 from .models import Association, Contribution, Depense, Match, Membre
 from .forms import DepenseForm
+import logging
+
 
 @login_required
 def gestion(request):
@@ -158,13 +160,21 @@ def about(request):
     association = Association.objects.first()
     return render(request, 'about.html', {'association': association})
 
+logger = logging.getLogger(__name__)
+
+@login_required
 def bureau(request):
-    association = Association.objects.first()
-    bureau_membres = Membre.objects.filter(association=association, role__nom__in=[
-        'president', 'vice_president', 'censeur', 'secretaire', 'tresorier',
-        'conseiller', 'commissaire_comptes', 'charge_communication'
-    ])
-    return render(request, 'bureau.html', {'bureau_membres': bureau_membres})
+    association = request.user.association
+    if not association:
+        logger.error("No association for user %s", request.user)
+        return render(request, 'core/403.html', {'error': 'Aucune association associée à cet utilisateur.'}, status=403)
+    bureau_membres = Membre.objects.filter(association=association, role__nom__in=['president', 'secretaire', 'tresorier']).order_by('role__nom')
+    logger.debug("Found %d bureau members for association %s", bureau_membres.count(), association)
+    bureau_membres_with_delays = [(membre, index / 3.0) for index, membre in enumerate(bureau_membres)]
+    return render(request, 'core/bureau.html', {
+        'association': association,
+        'bureau_membres_with_delays': bureau_membres_with_delays,
+    })
 
 def rencontres(request):
     association = Association.objects.first()
@@ -227,8 +237,10 @@ def annonces(request):
     association = request.user.association
     if not association:
         return render(request, 'core/403.html', {'error': 'Aucune association associée à cet utilisateur.'}, status=403)
-    annonces = Annonce.objects.filter(association=association)
+    annonces = Annonce.objects.filter(association=association).order_by('-date_creation')
+    # Ajouter un délai d'animation à chaque annonce
+    annonces_with_delays = [(annonce, index / 3.0) for index, annonce in enumerate(annonces)]
     return render(request, 'core/annonces.html', {
         'association': association,
-        'annonces': annonces,
+        'annonces_with_delays': annonces_with_delays,
     })

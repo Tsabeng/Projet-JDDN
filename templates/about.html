@@ -1,28 +1,123 @@
 {% extends 'base.html' %}
 {% load static %}
-
-{% block title %}À propos{% endblock %}
+{% block title %}À propos - Association Deux Zero{% endblock %}
 {% block content %}
-<div class="container">
-    <h1 class="display-4 mb-4">À propos de Deux Zero</h1>
-    {% if association %}
-        <div class="card">
-            <div class="card-body">
-                <h2 class="card-title">{{ association.nom }}</h2>
-                <p class="card-text">{{ association.description }}</p>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><strong>Date de création :</strong> {{ association.date_creation }}</li>
-                    <li class="list-group-item"><strong>Email :</strong> {{ association.email }}</li>
-                    <li class="list-group-item"><strong>Téléphone :</strong> {{ association.telephone }}</li>
-                    <li class="list-group-item"><strong>Adresse :</strong> {{ association.adresse }}</li>
-                </ul>
-                {% if association.logo %}
-                    <img src="{{ association.logo.url }}" class="img-fluid mt-3" alt="Logo" style="max-width: 200px;">
-                {% endif %}
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <div class="hero-section text-center text-white" style="background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%); padding: 80px 20px;">
+        <h1 class="display-3 fw-bold mb-4 animate__animated animate__fadeIn">À propos de l'Association Deux Zero</h1>
+        <p class="lead mb-4 animate__animated animate__fadeIn" style="animation-delay: 0.3s;">
+            Découvrez notre histoire, nos valeurs et notre passion pour le sport et la communauté.
+        </p>
+        <a href="{% url 'contact' %}" class="btn btn-primary btn-lg animate__animated animate__pulse" style="animation-delay: 0.6s;">Nous contacter</a>
+    </div>
+
+    <!-- Association Details Section -->
+    <div class="container my-5">
+        {% if association %}
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-lg border-0 animate__animated animate__fadeInUp" style="animation-delay: 0.9s;">
+                        <div class="card-body p-5">
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    {% if association.logo %}
+                                        <img src="{{ association.logo.url }}" class="img-fluid rounded-circle mb-3" alt="Logo de {{ association.nom }}" style="max-width: 150px; border: 3px solid #2a5298;">
+                                    {% else %}
+                                        <img src="https://via.placeholder.com/150?text=Logo" class="img-fluid rounded-circle mb-3" alt="Placeholder Logo" style="max-width: 150px; border: 3px solid #2a5298;">
+                                    {% endif %}
+                                    <h3 class="fw-bold text-primary">{{ association.nom }}</h3>
+                                </div>
+                                <div class="col-md-8">
+                                    <p class="card-text fs-5">{{ association.description }}</p>
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item"><strong>Date de création :</strong> {{ association.date_creation|date:"d/m/Y" }}</li>
+                                        <li class="list-group-item"><strong>Email :</strong> <a href="mailto:{{ association.email }}">{{ association.email }}</a></li>
+                                        <li class="list-group-item"><strong>Téléphone :</strong> {{ association.telephone }}</li>
+                                        <li class="list-group-item"><strong>Adresse :</strong> {{ association.adresse }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="text-center text-muted animate__animated animate__fadeInUp" style="animation-delay: 0.9s;">
+                <p class="fs-5">Aucune information sur l'association disponible pour le moment. Contactez-nous pour en savoir plus !</p>
+                <a href="{% url 'contact' %}" class="btn btn-outline-primary">Nous contacter</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Mission and Values Section -->
+    <div class="mission-section py-5 bg-light">
+        <div class="container">
+            <h2 class="display-5 fw-bold text-center mb-5 animate__animated animate__fadeIn">Nos Valeurs</h2>
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 1.2s;">
+                        <div class="card-body">
+                            <h4 class="card-title text-primary">Solidarité</h4>
+                            <p class="card-text">Nous unissons nos membres pour créer une communauté forte et soudée, prête à relever tous les défis.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 1.4s;">
+                        <div class="card-body">
+                            <h4 class="card-title text-primary">Passion</h4>
+                            <p class="card-text">Le sport est notre moteur. Chaque match est une occasion de partager notre amour pour le jeu.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm animate__animated animate__fadeInUp" style="animation-delay: 1.6s;">
+                        <div class="card-body">
+                            <h4 class="card-title text-primary">Engagement</h4>
+                            <p class="card-text">Nous nous engageons à organiser des événements mémorables et à soutenir des initiatives locales.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    {% else %}
-        <p class="text-muted">Aucune information sur l'association disponible.</p>
-    {% endif %}
+    </div>
+
+    <!-- Call to Action Section -->
+    <div class="cta-section text-center py-5" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
+        <h2 class="display-5 fw-bold text-white mb-4 animate__animated animate__fadeIn">Rejoignez notre aventure !</h2>
+        <p class="lead text-white mb-4">Devenez membre de Deux Zero et participez à nos activités sportives et communautaires.</p>
+        <a href="{% url 'membres' %}" class="btn btn-success btn-lg animate__animated animate__pulse">Découvrir nos membres</a>
+    </div>
+
+    <!-- Custom CSS -->
+    <style>
+        .hero-section {
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        .card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        .list-group-item {
+            background: transparent;
+            border: none;
+            padding: 10px 0;
+        }
+        .animate__pulse {
+            animation-duration: 1.5s;
+            animation-iteration-count: infinite;
+        }
+    </style>
+
+    <!-- Include Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 </div>
 {% endblock %}
