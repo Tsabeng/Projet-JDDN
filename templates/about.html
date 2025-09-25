@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}À propos{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="display-4 mb-4">À propos de Deux Zero</h1>
+    {% if association %}
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">{{ association.nom }}</h2>
+                <p class="card-text">{{ association.description }}</p>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Date de création :</strong> {{ association.date_creation }}</li>
+                    <li class="list-group-item"><strong>Email :</strong> {{ association.email }}</li>
+                    <li class="list-group-item"><strong>Téléphone :</strong> {{ association.telephone }}</li>
+                    <li class="list-group-item"><strong>Adresse :</strong> {{ association.adresse }}</li>
+                </ul>
+                {% if association.logo %}
+                    <img src="{{ association.logo.url }}" class="img-fluid mt-3" alt="Logo" style="max-width: 200px;">
+                {% endif %}
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">Aucune information sur l'association disponible.</p>
+    {% endif %}
+</div>
+{% endblock %}

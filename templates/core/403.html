@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Accès interdit{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="display-4 mb-4">Accès interdit</h1>
+    <p>{{ error|default:"Vous n'avez pas les autorisations nécessaires pour accéder à cette page." }}</p>
+    <a href="{% url 'home' %}" class="btn btn-primary">Retour à l'accueil</a>
+</div>
+{% endblock %}

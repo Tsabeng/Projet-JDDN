@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Rencontres{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="display-4 mb-4">Nos Rencontres</h1>
+    <div class="row">
+        {% for match in matches %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ match.titre }}</h5>
+                        <p class="card-text"><strong>Type :</strong> {{ match.get_type_match_display }}</p>
+                        <p class="card-text"><strong>Date :</strong> {{ match.date_match }}</p>
+                        <p class="card-text"><strong>Lieu :</strong> {{ match.lieu }}</p>
+                        {% if match.adversaire %}
+                            <p class="card-text"><strong>Adversaire :</strong> {{ match.adversaire }}</p>
+                        {% endif %}
+                        {% if match.mise %}
+                            <p class="card-text"><strong>Mise :</strong> {{ match.mise }} FCFA</p>
+                        {% endif %}
+                        <p class="card-text">{{ match.description|truncatewords:20 }}</p>
+                        <!-- Photos associées -->
+                        {% for photo in match.photo_set.all %}
+                            <img src="{{ photo.image.url }}" class="img-fluid mb-2" alt="{{ photo.titre }}" style="max-height: 150px;">
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Aucune rencontre à afficher.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Accueil{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="display-4 text-center mb-4">Bienvenue à l'Association Deux Zero</h1>
+    {% if association %}
+        <p class="lead text-center">{{ association.description|truncatewords:30 }}</p>
+    {% endif %}
+    <!-- Carousel -->
+    <div id="carouselHome" class="carousel slide mb-4" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for photo in photos %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ photo.image.url }}" class="d-block w-100" alt="{{ photo.titre }}" style="max-height: 400px; object-fit: cover;">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>{{ photo.titre }}</h5>
+                        <p>{{ photo.description|truncatewords:10 }}</p>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="carousel-item active">
+                    <img src="https://via.placeholder.com/800x400" class="d-block w-100" alt="Placeholder">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Bienvenue</h5>
+                        <p>Découvrez nos activités !</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselHome" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselHome" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Membres{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="display-4 mb-4">Nos Membres</h1>
+    <div class="row">
+        {% for membre in membres %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if membre.photo %}
+                        <img src="{{ membre.photo.url }}" class="card-img-top" alt="{{ membre.pseudo }}" style="height: 200px; object-fit: cover;">
+                    {% else %}
+                        <img src="https://via.placeholder.com/200" class="card-img-top" alt="Placeholder">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ membre.first_name }} {{ membre.last_name }}</h5>
+                        <p class="card-text"><strong>Pseudo :</strong> {{ membre.pseudo }}</p>
+                        <p class="card-text"><strong>Rôle :</strong> {{ membre.role.get_nom_display|default:"Membre" }}</p>
+                    </div>
+                    {% if user.role.nom in 'president,vice_president' %}
+    <a href="{% url 'supprimer_membre' membre.id %}" class="btn btn-danger btn-sm">Supprimer</a>
+{% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Aucun membre à afficher.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Annonces{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="display-4 mb-4">Annonces de {{ association.nom }}</h1>
+    {% if annonces %}
+        <div class="list-group">
+            {% for annonce in annonces %}
+                <div class="list-group-item">
+                    <h5 class="mb-1">{{ annonce.titre }}</h5>
+                    <p class="mb-1">{{ annonce.contenu }}</p>
+                    <small>Publié par {{ annonce.publie_par.pseudo|default:"N/A" }} le {{ annonce.date_creation|date:"d/m/Y H:i" }}</small>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Aucune annonce publiée.</p>
+    {% endif %}
+    {% if user.is_bureau %}
+        <a href="{% url 'ajouter_annonce' %}" class="btn btn-primary mt-3">Ajouter Annonce</a>
+    {% endif %}
+</div>
+{% endblock %}

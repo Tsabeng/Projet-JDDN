@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Gestion{% endblock %}
+{% block content %}
+<div class="container">
+    <h1 class="display-4 mb-4">Gestion de {{ association.nom }}</h1>
+    <!-- Mini Dashboard -->
+    <div class="card mb-4">
+        <div class="-card-body">
+            <h2 class="card-title">Solde Actuel</h2>
+            <p class="display-6 text-success">{{ solde }} FCFA</p>
+        </div>
+    </div>
+    <!-- Ajouter Membre (Président et Vice-Président) -->
+    {% if user.is_bureau and user.role.nom in 'president,vice_president' %}
+        <a href="{% url 'ajouter_membre' %}" class="btn btn-primary mb-3">Ajouter Membre</a>
+    {% endif %}
+    <!-- Ajouter Contribution (Trésorier uniquement) -->
+    {% if user.role.nom == 'tresorier' %}
+        <h3 class="mb-3">Ajouter Contributions</h3>
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            <input type="hidden" name="ajouter_contribution" value="1">
+            <div class="mb-3">
+                <label for="match_id" class="form-label">Sélectionner un Match</label>
+                <select name="match_id" class="form-select" id="match_id">
+                    {% for match in matches %}
+                        <option value="{{ match.id }}">{{ match.titre }} ({{ match.date_match|date:"d/m/Y H:i" }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <h4>Membres</h4>
+            {% for membre in membres %}
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" name="membres" value="{{ membre.id }}" id="membre_{{ membre.id }}">
+                    <label class="form-check-label" for="membre_{{ membre.id }}">{{ membre.pseudo }} ({{ membre.first_name }} {{ membre.last_name }})</label>
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary mt-3">Enregistrer Contributions</button>
+        </form>
+    {% endif %}
+    <!-- Contributions -->
+    <h3 class="mb-3">Contributions</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Membre</th>
+                <th>Match</th>
+                <th>Montant</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for contribution in contributions %}
+                <tr>
+                    <td>{{ contribution.membre.pseudo }}</td>
+                    <td>{{ contribution.match.titre }}</td>
+                    <td>{{ contribution.montant }} FCFA</td>
+                    <td>{{ contribution.date|date:"d/m/Y H:i" }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">Aucune contribution enregistrée.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Ajouter Dépense (Trésorier uniquement) -->
+    {% if user.role.nom == 'tresorier' %}
+        <h3 class="mb-3">Ajouter une Dépense</h3>
+        <form method="post" class="mb-4">
+            {% csrf_token %}
+            <input type="hidden" name="ajouter_depense" value="1">
+            {{ depense_form|crispy }}
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+        </form>
+    {% endif %}
+    <!-- Dépenses -->
+    <h3 class="mb-3">Dépenses</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Montant</th>
+                <th>Date</th>
+                <th>Approuvé par</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for depense in depenses %}
+                <tr>
+                    <td>{{ depense.description }}</td>
+                    <td>{{ depense.montant }} FCFA</td>
+                    <td>{{ depense.date|date:"d/m/Y H:i" }}</td>
+                    <td>{{ depense.approuve_par.pseudo|default:"N/A" }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="4">Aucune dépense enregistrée.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Ajouter Règlement (Censeur uniquement) -->
+    {% if user.role.nom == 'censeur' %}
+        <a href="{% url 'ajouter_reglement' %}" class="btn btn-primary mb-3">Ajouter Règlement</a>
+    {% endif %}
+    <!-- Ajouter Match et Photo (Membres du bureau) -->
+    {% if user.is_bureau %}
+        <a href="{% url 'ajouter_match' %}" class="btn btn-primary mb-3">Ajouter Match</a>
+        <a href="{% url 'ajouter_photo' %}" class="btn btn-primary mb-3">Ajouter Photo</a>
+    {% endif %}
+    <!-- Ajouter Annonce (Chargé de la communication et membres du bureau) -->
+    {% if user.is_bureau %}
+        <a href="{% url 'ajouter_annonce' %}" class="btn btn-primary mb-3">Ajouter Annonce</a>
+    {% endif %}
+</div>
+{% endblock %}
