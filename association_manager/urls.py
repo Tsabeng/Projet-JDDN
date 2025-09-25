@@ -19,6 +19,8 @@ urlpatterns = [
     path('supprimer_membre/<int:membre_id>/', views.supprimer_membre, name='supprimer_membre'),
     path('ajouter_reglement/', views.ajouter_reglement, name='ajouter_reglement'),
     path('ajouter_match/', views.ajouter_match, name='ajouter_match'),
+    path('supprimer_match/<int:match_id>/', views.supprimer_match, name='supprimer_match'),
+
     path('ajouter_photo/', views.ajouter_photo, name='ajouter_photo'),
     path('ajouter_annonce/', views.ajouter_annonce, name='ajouter_annonce'),
     path('accounts/', include('django.contrib.auth.urls')),

@@ -110,23 +110,7 @@ def ajouter_membre(request):
     else:
         form = MembreForm()
     return render(request, 'core/ajouter_membre.html', {'form': form})
-@login_required
-def ajouter_match(request):
-    if not request.user.is_bureau():
-        return render(request, 'core/403.html', status=403)
-    if request.method == 'POST':
-        form = MatchForm(request.POST)
-        if form.is_valid():
-            match = form.save(commit=False)
-            match.association = request.user.association
-            match.save()
-            messages.success(request, 'Match ajouté avec succès.')
-            return redirect('gestion')
-        else:
-            messages.error(request, 'Erreur dans le formulaire.')
-    else:
-        form = MatchForm()
-    return render(request, 'core/ajouter_match.html', {'form': form})
+
 
 @login_required
 def ajouter_photo(request):
@@ -209,10 +193,46 @@ def bureau(request):
         'bureau_membres_with_delays': bureau_membres_with_delays,
     })
 
+@login_required
 def rencontres(request):
-    association = Association.objects.first()
+    association = request.user.association
+    if not association:
+        logger.error("No association for user %s", request.user)
+        return render(request, 'core/403.html', {'error': 'Aucune association associée à cet utilisateur.'}, status=403)
     matches = Match.objects.filter(association=association).order_by('-date_match')
-    return render(request, 'rencontres.html', {'matches': matches})
+    logger.debug("Found %d matches for association %s", matches.count(), association)
+    matches_with_delays = [(match, index / 3.0) for index, match in enumerate(matches)]
+    return render(request, 'core/rencontres.html', {
+        'association': association,
+        'matches_with_delays': matches_with_delays,
+    })
+
+@login_required
+def ajouter_match(request):
+    if request.user.role.nom not in ['president', 'vice_president']:
+        logger.error("User %s not authorized to add matches", request.user)
+        return render(request, 'core/403.html', {'error': 'Vous n\'êtes pas autorisé à ajouter des rencontres.'}, status=403)
+    if request.method == 'POST':
+        form = MatchForm(request.POST)
+        if form.is_valid():
+            match = form.save(commit=False)
+            match.association = request.user.association
+            match.save()
+            logger.info("Match %s added by %s", match, request.user)
+            return redirect('rencontres')
+    else:
+        form = MatchForm()
+    return render(request, 'core/ajouter_match.html', {'form': form})
+
+@login_required
+def supprimer_match(request, match_id):
+    if request.user.role.nom not in ['president', 'vice_president']:
+        logger.error("User %s not authorized to delete matches", request.user)
+        return render(request, 'core/403.html', {'error': 'Vous n\'êtes pas autorisé à supprimer des rencontres.'}, status=403)
+    match = get_object_or_404(Match, id=match_id, association=request.user.association)
+    match.delete()
+    logger.info("Match %s deleted by %s", match, request.user)
+    return redirect('rencontres')
 
 def contact(request):
     if request.method == 'POST':
